@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu</title>
+
+<style>
+    @font-face {
+        font-family: Minecraftia;
+        src: local(Minecraftia), url('Minecraftia-Regular.ttf');
+    }
+        .text{
+            font-family:Minecraftia,Arial,sans serif; color: #F8F8F8;
+            text-shadow: 0px 1px 5px black;
+            background-color: rgba(128, 128, 128, 0.4);
+           
+        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background-image: url(xadrez.jpg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    padding: 30px;
+}
+
+.container {
+    position: relative;
+    width: 80%;
+    max-width: 450px;
+    max-height: 500px;
+    padding: 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("novoback.gif");
+    background-repeat: no-repeat;
+    background-size: 80%; 
+    background-position: center;
+    transform: rotate(90deg);
+    transform-origin: center;
+    z-index: 0;
+}
+.container > * {
+    position: relative;
+    z-index: 1;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.botoes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+}
+    
+
+.botao {
+    width: 100%;
+  height:70px;
+  background-size: cover;
+  background-position:center;
+    cursor: pointer;
+    transition: transform 0.05s;
+    text-align: center;
+      font-family:Minecraftia,Arial,sans serif; color: #F8F8F8;
+      text-shadow: 0px 1px 5px black;
+      background-color: rgba(128, 128, 128, 0.4);
+    box-shadow: 0px 2px 5px gray;
+}
+
+.botao:active {
+    transform: scale(0.95);
+}
+    #timer{visibility: hidden;}
+    #stop{visibility:hidden; background-color: red; width:210%; border-radius: 5px;}
+    
+    img{width:100px; height: 100px;position: absolute; top:70%;border-style:bold; border-radius: 90px;box-shadow: 0px 2px 5px gray;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1 class="text">MENU</h1>
+    <h1 id="timer" class="text"></h1>
+    <div class="botoes">
+        <button id="bt_bolo" class="botao" onclick="acao1()">Bolos</button>
+        <button id="bt_ovo" class="botao" onclick="acao2()">Ovo cozido</button>
+        <button id="bt_brownie" class="botao" onclick="acao3()">Brownie</button>
+        <button id="bt_cookie" class="botao" onclick="acao4()">Cookie</button>
+        <button id="stop" class="botao" onclick="pararSom()">OK!</button>
+    </div>
+</div>
+    <img src="cake.gif">
+<script>
+let timer;
+
+function acao1() { cronometro(2400); }
+function acao2() { cronometro(5); }
+function acao3() { cronometro(1800); }
+function acao4() { cronometro(1200); }
+
+function cronometro(tempo) {
+  clearInterval(timer);
+
+  const texto = document.getElementById("timer");
+  texto.style.visibility = "visible";
+  timer = setInterval(() => {
+    const minutos = Math.floor(tempo / 60);
+    const segundos = tempo % 60;
+
+    texto.innerText =
+      `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
+
+    tempo--;
+
+    if (tempo < 0) {
+      clearInterval(timer);
+      texto.innerText = "00:00";
+      const stop=document.getElementById("stop");
+      stop.style.visibility = "visible";
+      pronto();
+      
+    }
+  }, 1000);
+}
+
+let ctx;
+let oscilador;
+let loopSom;
+
+function pronto() {
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  oscilador = ctx.createOscillator();
+  oscilador.type = "square";
+  oscilador.frequency.value = 880;
+  oscilador.connect(ctx.destination);
+  oscilador.start();
+
+  loopSom = setInterval(() => {
+    oscilador.frequency.value = 880;
+    setTimeout(() => oscilador.frequency.value = 660, 150);
+  }, 300);
+    
+}
+
+function pararSom() {
+  clearInterval(loopSom);
+  oscilador.stop();
+  ctx.close();
+  const stop = document.getElementById("stop");
+  stop.style.visibility = "hidden";
+    alert("bom apetite!");
+}
+</script>
+
+</body>
+</html>
